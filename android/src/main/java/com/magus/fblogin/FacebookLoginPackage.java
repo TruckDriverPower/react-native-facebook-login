@@ -17,7 +17,7 @@ public class FacebookLoginPackage implements ReactPackage {
         return Arrays.<NativeModule>asList(new FacebookLoginModule(reactContext));
     }
 
-    @Override
+    // @Override
     public List<Class<? extends JavaScriptModule>> createJSModules() {
         return Collections.emptyList();
     }
