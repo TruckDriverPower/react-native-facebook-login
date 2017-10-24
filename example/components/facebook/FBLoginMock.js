@@ -9,29 +9,30 @@ var {
   Image,
   View,
   TouchableHighlight,
+  ViewPropTypes
 } = ReactNative;
 
 var FBLoginManager = require('NativeModules').FBLoginManager;
 
 var FBLoginMock = React.createClass({
   propTypes: {
-    style: View.propTypes.style,
+    style: ViewPropTypes.style,
     onPress: PropTypes.func,
     onLogin: PropTypes.func,
     onLogout: PropTypes.func,
   },
 
-  getInitialState: function(){
+  getInitialState: function () {
     return {
       user: null,
     };
   },
 
-  handleLogin: function(){
+  handleLogin: function () {
     var _this = this;
-    FBLoginManager.login(function(error, data){
+    FBLoginManager.login(function (error, data) {
       if (!error) {
-        _this.setState({ user : data});
+        _this.setState({ user: data });
         _this.props.onLogin && _this.props.onLogin();
       } else {
         console.log(error, data);
@@ -39,11 +40,11 @@ var FBLoginMock = React.createClass({
     });
   },
 
-  handleLogout: function(){
+  handleLogout: function () {
     var _this = this;
-    FBLoginManager.logout(function(error, data){
+    FBLoginManager.logout(function (error, data) {
       if (!error) {
-        _this.setState({ user : null});
+        _this.setState({ user: null });
         _this.props.onLogout && _this.props.onLogout();
       } else {
         console.log(error, data);
@@ -51,7 +52,7 @@ var FBLoginMock = React.createClass({
     });
   },
 
-  onPress: function(){
+  onPress: function () {
     this.state.user
       ? this.handleLogout()
       : this.handleLogin();
@@ -59,16 +60,16 @@ var FBLoginMock = React.createClass({
     this.props.onPress && this.props.onPress();
   },
 
-  componentWillMount: function(){
+  componentWillMount: function () {
     var _this = this;
-    FBLoginManager.getCredentials(function(error, data){
+    FBLoginManager.getCredentials(function (error, data) {
       if (!error) {
-        _this.setState({ user : data})
+        _this.setState({ user: data })
       }
     });
   },
 
-  render: function() {
+  render: function () {
     var text = this.state.user ? "Log out" : "Log in with Facebook";
     return (
       <View style={this.props.style}>

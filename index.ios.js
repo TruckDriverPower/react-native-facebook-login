@@ -7,13 +7,14 @@ import {
   NativeModules,
   NativeMethodsMixin,
   DeviceEventEmitter,
-  requireNativeComponent
+  requireNativeComponent,
+  ViewPropTypes
 } from 'react-native';
 
 const FBLoginManager = NativeModules.MFBLoginManager;
 const RCTMFBLogin = requireNativeComponent('RCTMFBLogin', FBLogin);
 
-const  styles = StyleSheet.create({
+const styles = StyleSheet.create({
   base: {
     width: 175,
     height: 30,
@@ -22,31 +23,31 @@ const  styles = StyleSheet.create({
 
 
 class FBLogin extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.bindAll = this.bindAll.bind(this);
     this.bindAll();
 
     this.statics = {
-      Events : FBLoginManager.Events,
+      Events: FBLoginManager.Events,
     };
 
     this.state = {
-      credentials   : null,
-      subscriptions : [],
+      credentials: null,
+      subscriptions: [],
     }
   }
 
   bindAll() {
-    for( const prop in NativeMethodsMixin) {
-      if( typeof NativeMethodsMixin[ prop ] === 'function') {
+    for (const prop in NativeMethodsMixin) {
+      if (typeof NativeMethodsMixin[prop] === 'function') {
         this[prop] = NativeMethodsMixin[prop].bind(this);
       }
     }
   }
 
-  componentWillMount(){
+  componentWillMount() {
     const subscriptions = this.state.subscriptions;
 
     // For each event key in FBLoginManager constantsToExport
@@ -57,29 +58,29 @@ class FBLogin extends Component {
         FBLoginManager.Events[event],
         (eventData) => {
           // event handler defined? call it and pass along any event data
-          let eventHandler = this.props["on"+event];
+          let eventHandler = this.props["on" + event];
           eventHandler && eventHandler(eventData);
         }
       ));
     });
     // Add listeners to state
-    this.setState({ subscriptions : subscriptions });
+    this.setState({ subscriptions: subscriptions });
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     const subscriptions = this.state.subscriptions;
     subscriptions.forEach(subscription => subscription.remove());
     this.mounted = false;
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.mounted = true;
     FBLoginManager.getCredentials((error, data) => {
-      if( !this.mounted ) return;
+      if (!this.mounted) return;
       if (!error) {
-        this.setState({ credentials : data.credentials });
+        this.setState({ credentials: data.credentials });
       } else {
-        this.setState({ credentials : null });
+        this.setState({ credentials: null });
       }
     });
   }
@@ -90,7 +91,7 @@ class FBLogin extends Component {
 }
 
 FBLogin.propTypes = {
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   permissions: PropTypes.array, // default: ["public_profile", "email"]
   loginBehavior: PropTypes.number, // default: Native
   onLogin: PropTypes.func,
